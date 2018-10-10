@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/bottom_tab1"
+        android:enabled="true"
+        android:icon="@drawable/tab_home"
+        android:title="홈"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/bottom_tab2"
+        android:icon="@drawable/tab_album"
+        android:title="앨범"
+
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/bottom_tab3"
+        android:enabled="true"
+        android:icon="@drawable/tab_chat"
+        android:title="채팅"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/bottom_tab4"
+        android:enabled="true"
+        android:icon="@drawable/tab_board"
+        android:title="게시판"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/bottom_tab5"
+        android:enabled="true"
+        android:icon="@drawable/tab_setting"
+        android:title="설정"
+        app:showAsAction="ifRoom" />
+
+</menu>
