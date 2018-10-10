@@ -53,9 +53,11 @@ class LoginAcitivity : AppCompatActivity() {
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
 
+        Log.e("체크", "체크11")
+
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, OnCompleteListener<AuthResult> { task ->
+                .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val user = FirebaseAuth.getInstance().currentUser;
                         var db = FirebaseFirestore.getInstance()
@@ -67,7 +69,7 @@ class LoginAcitivity : AppCompatActivity() {
                                         startActivity(Intent(this, MainActivity::class.java))
                                         finish()
                                     } else {
-                                        Log.e("체크",it.exception.toString())
+                                        Log.e("체크", it.exception.toString())
                                         Toast.makeText(this, "회원가입 오류 100, 관리자에게 문의해주세요.", Toast.LENGTH_SHORT).show()
                                     }
                                 }
@@ -75,7 +77,7 @@ class LoginAcitivity : AppCompatActivity() {
                         //회원가입 실패
                     }
 
-                })
+                }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -85,6 +87,8 @@ class LoginAcitivity : AppCompatActivity() {
                 val account = task.getResult(ApiException::class.java)
                 firebaseAuthWithGoogle(account)
             } catch (e: ApiException) {
+                Log.e("체크", "API에러")
+                Log.e("체크", e.toString())
             }
 
         }
