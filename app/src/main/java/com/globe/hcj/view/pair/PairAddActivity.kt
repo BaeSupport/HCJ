@@ -6,13 +6,13 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.globe.hcj.MainActivity
 import com.globe.hcj.R
+import com.globe.hcj.data.firestore.Room
 import com.globe.hcj.data.firestore.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_pair_add.*
 import com.google.firebase.firestore.DocumentReference
-
 
 
 /**
@@ -56,15 +56,17 @@ class PairAddActivity : AppCompatActivity() {
                             //2. 상대방의 pair가 등록되어있는지 확인
                             if (pairUser!!.pair.isEmpty()) {
                                 val newRoom = db.collection("room").document()
+                                val roomId = newRoom.id
+                                newRoom.set(Room(roomId))
+
                                 val myUserRef = db.collection("user").document(myEmail)
                                 val pairUserRef = db.collection("user").document(pairEmail)
 
 
-
                                 //3. 나와 상대방에 pair 등록
-                                myUserRef.update("pair", pairEmail).addOnCompleteListener {
+                                myUserRef.update("pair", pairEmail, "roomId", roomId, "pairRefName", pairUserRef).addOnCompleteListener {
                                     if (it.isSuccessful) {
-                                        pairUserRef.update("pair", myEmail).addOnCompleteListener {
+                                        pairUserRef.update("pair", myEmail, "roomId", roomId, "pairRefName", myUserRef).addOnCompleteListener {
                                             if (it.isSuccessful) {
                                                 //4. 완료 -> 메인페이지로 이동
                                                 Toast.makeText(this@PairAddActivity, "등록이 완료되었습니다.", Toast.LENGTH_SHORT).show()

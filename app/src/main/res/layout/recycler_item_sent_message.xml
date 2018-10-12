@@ -9,7 +9,7 @@
     android:paddingTop="8dp">
 
     <TextView
-        android:id="@+id/text_message_body"
+        android:id="@+id/send_text_message_body"
         android:text="안녕 민수야"
         android:background="@drawable/sent_message_box"
         android:layout_width="wrap_content"
@@ -22,17 +22,17 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_message_time"
+        android:id="@+id/send_text_message_time"
         android:text="11:40"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="10sp"
         android:layout_marginRight="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/text_message_body"
-        app:layout_constraintRight_toLeftOf="@+id/text_message_body" />
+        app:layout_constraintBottom_toBottomOf="@+id/send_text_message_body"
+        app:layout_constraintRight_toLeftOf="@+id/send_text_message_body" />
 
     <TextView
-        android:id="@+id/text_message_unread_count"
+        android:id="@+id/send_text_message_unread_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
@@ -41,6 +41,6 @@
         android:text="1"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/text_message_time" />
+        app:layout_constraintEnd_toStartOf="@+id/send_text_message_time" />
 
 </android.support.constraint.ConstraintLayout>
