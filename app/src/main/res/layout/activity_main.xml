@@ -15,7 +15,8 @@
         android:id="@+id/mainBottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        app:itemIconTint="@color/main_pink"
+        app:itemIconTint="@color/bottom_sheet_color"
+        app:itemTextColor="@color/bottom_sheet_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_navigation_menu" />
 

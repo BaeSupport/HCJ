@@ -8,15 +8,18 @@ import android.widget.Toast
 import com.globe.hcj.MainActivity
 import com.globe.hcj.R
 import com.globe.hcj.data.firestore.User
+import com.globe.hcj.view.pair.PairAddActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activitiy_login.*
 
@@ -53,26 +56,41 @@ class LoginAcitivity : AppCompatActivity() {
 
     private fun firebaseAuthWithGoogle(acct: GoogleSignInAccount) {
 
-        Log.e("체크", "체크11")
+        Log.e("체크11", "체크")
 
         val credential = GoogleAuthProvider.getCredential(acct.idToken, null)
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener { task ->
+                    Log.e("체크22", "체크")
                     if (task.isSuccessful) {
                         val user = FirebaseAuth.getInstance().currentUser;
-                        var db = FirebaseFirestore.getInstance()
+                        val db = FirebaseFirestore.getInstance()
                         val email = user!!.email
-                        var userData = User(user.displayName!!, user.email!!, "", "")
-                        db.collection("user").document(email!!).set(userData)
-                                .addOnCompleteListener {
-                                    if (it.isSuccessful) {
-                                        startActivity(Intent(this, MainActivity::class.java))
-                                        finish()
+                        val userData = User(user.displayName!!, user.email!!, "", "")
+                        val docRef = db.collection("user").document(email!!)
+                        docRef.get().addOnCompleteListener { p0 ->
+                            if (p0.isSuccessful) {
+                                val document = p0.result
+                                if (!document.exists()) {
+                                    Log.e("체크22-22", "추가과정")
+                                    db.collection("user").document(email).set(userData)
+                                            .addOnCompleteListener {
+                                                if (it.isSuccessful) {
+                                                    startActivity(Intent(this@LoginAcitivity, PairAddActivity::class.java))
+                                                    finish()
+                                                }
+                                            }
+                                } else {
+                                    //로그인했는데 이미 디비에 정보가 있는 회원 케이스
+                                    val user = document.toObject(User::class.java)
+                                    if (user!!.pair.isBlank()) {
+                                        startActivity(Intent(this@LoginAcitivity, PairAddActivity::class.java))
                                     } else {
-                                        Log.e("체크", it.exception.toString())
-                                        Toast.makeText(this, "회원가입 오류 100, 관리자에게 문의해주세요.", Toast.LENGTH_SHORT).show()
+                                        startActivity(Intent(this@LoginAcitivity, MainActivity::class.java))
                                     }
                                 }
+                            }
+                        }
                     } else {
                         //회원가입 실패
                     }

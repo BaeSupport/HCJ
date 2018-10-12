@@ -23,6 +23,7 @@
         <activity android:name=".view.login.LoginAcitivity" />
 
         <activity android:name=".MainActivity" />
+        <activity android:name=".view.pair.PairAddActivity" />
     </application>
 
 </manifest>
