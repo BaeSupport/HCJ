@@ -20,7 +20,7 @@ class ChatRecyclerViewAdapter(var context: Context) : RecyclerView.Adapter<ChatM
     var list = ArrayList<IMessageInterface>()
 
     override fun getItemViewType(position: Int): Int {
-        //사진 전송시 수신,발신 별로 각각 텍스트 포토 로 4개로 구분하면 됩니다.
+        //TODO 사진 전송시 수신,발신 별로 각각 텍스트 포토 로 4개로 구분
         val info = list[position] as TextMessage
         if (info.sendEmail == FirebaseAuth.getInstance().currentUser!!.email) {
             return SEND_MESSAGE
@@ -98,9 +98,9 @@ class PairTextMessageViewHolder(val view: View) : ChatMessage(view) {
         view.receive_text_message_body.text = convertData.message
         view.receive_text_message_time.text = dateFormat.format(convertData.messageDate)
         if (convertData.unReadCount == 0) {
-            view.send_text_message_unread_count.visibility = View.INVISIBLE
+            view.receive_text_message_unread_count.visibility = View.INVISIBLE
         } else {
-            view.send_text_message_unread_count.visibility = View.VISIBLE
+            view.receive_text_message_unread_count.visibility = View.VISIBLE
         }
     }
 }

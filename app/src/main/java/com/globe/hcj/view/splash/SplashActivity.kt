@@ -24,17 +24,6 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val db = FirebaseFirestore.getInstance()
-        db.collection("user").document(FirebaseAuth.getInstance().currentUser!!.email!!).get()
-                .addOnCompleteListener {
-
-                }
-
-        val email = TraySharedPreference(this).getString(ROOM_ID, "")
-
-
-
-
         val handler = Handler()
         handler.postDelayed({
             val user = FirebaseAuth.getInstance().currentUser
@@ -50,10 +39,12 @@ class SplashActivity : AppCompatActivity() {
                             if (searchUser!!.pair.isBlank()) {
                                 startActivity(Intent(this@SplashActivity, PairAddActivity::class.java))
                             } else {
+                                val roomId = TraySharedPreference(this).getString(ROOM_ID, "")
+                                if (roomId.isNullOrEmpty())
+                                    TraySharedPreference(this).put(ROOM_ID, searchUser.roomId)
                                 startActivity(Intent(this@SplashActivity, MainActivity::class.java))
                             }
                         } else {
-
                             //TODO 회원가입은 되어 있는데 db에 정보가 없는 상황
                         }
                     }

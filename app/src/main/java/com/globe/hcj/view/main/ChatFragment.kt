@@ -9,13 +9,18 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import com.globe.hcj.R
+import com.globe.hcj.constants.ROOM_ID
 import com.globe.hcj.data.firestore.IMessageInterface
 import com.globe.hcj.data.firestore.TextMessage
+import com.globe.hcj.preference.TraySharedPreference
 import com.globe.hcj.view.main.apdater.ChatRecyclerViewAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.fragment_chat.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -24,25 +29,30 @@ import kotlinx.android.synthetic.main.fragment_chat.view.*
 
 class ChatFragment() : Fragment() {
 
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-
-        if (isVisibleToUser) {
-
-        } else {
-
-        }
-
-    }
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+    private lateinit var roomId: String
+    lateinit var messageEdit: EditText
 
     private var messageListener: ListenerRegistration? = null
-    private val adapter = ChatRecyclerViewAdapter(context)
+    private lateinit var adapter: ChatRecyclerViewAdapter
     private lateinit var recyclerview: RecyclerView
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        if (isVisibleToUser) {
+            addMessageListener()
+        } else {
+            if (messageListener != null) {
+                messageListener!!.remove()
+            }
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
+        roomId = TraySharedPreference(context!!).getString(ROOM_ID, "")!!
+        adapter = ChatRecyclerViewAdapter(context!!)
 
         with(view) {
-
             val layoutManager = LinearLayoutManager(context)
             layoutManager.stackFromEnd = true
             view.chat_room_recycler.layoutManager = layoutManager
@@ -50,14 +60,11 @@ class ChatFragment() : Fragment() {
             recyclerview = view.chat_room_recycler
             setView(view)
         }
-
-
-
         return view
     }
 
     private fun setView(view: View) {
-
+        messageEdit = view.chat_room_edit
         view.chat_room_edit.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
             }
@@ -71,11 +78,16 @@ class ChatFragment() : Fragment() {
             }
         })
 
+        view.chat_room_send.setOnClickListener {
+            sendMessage()
+        }
+
     }
 
-    fun addMessageListener(roomId: String) {
+    private fun addMessageListener() {
+
         val db = FirebaseFirestore.getInstance()
-        var allChatMessageRef = db.collection("room").document(roomId).collection("message")
+        val allChatMessageRef = db.collection("room").document(roomId).collection("message")
         messageListener = allChatMessageRef.addSnapshotListener { documentSnapshots, e ->
             if (documentSnapshots != null) {
                 for (dc in documentSnapshots.documentChanges) {
@@ -91,8 +103,8 @@ class ChatFragment() : Fragment() {
                                 }
                             }
                             adapter.addMessage(message)
+                            adapter.notifyDataSetChanged()
                             recyclerview.smoothScrollToPosition(adapter.itemCount)
-
                         }
                         DocumentChange.Type.MODIFIED -> {
                             //TODO 메세지 타입 여러개일시 타입 분류
@@ -101,15 +113,43 @@ class ChatFragment() : Fragment() {
                         }
                         DocumentChange.Type.REMOVED -> {
                         }
-
-
                     }
                 }
-
-
             }
         }
 
+
+    }
+
+    private fun sendMessage() {
+
+        val db = FirebaseFirestore.getInstance()
+        val messageText = messageEdit.text.toString()
+        val nowDate = Date()
+
+        val newChatMessageRef = db.collection("room").document(roomId)
+                .collection("message").document(dateFormat.format(nowDate))
+
+        if (messageText.isEmpty())
+            return
+
+        val messageObject = TextMessage()
+        with(messageObject) {
+            sendName = FirebaseAuth.getInstance().currentUser!!.displayName!!
+            message = messageText
+            messageDate = nowDate
+            unReadCount = 1
+            messageId = newChatMessageRef.id
+            sendEmail = FirebaseAuth.getInstance().currentUser!!.email!!
+            profileURL = FirebaseAuth.getInstance().currentUser!!.photoUrl.toString()
+        }
+        messageEdit.setText("")
+
+
+        newChatMessageRef.set(messageObject).addOnCompleteListener {
+
+
+        }
 
     }
 

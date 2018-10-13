@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.globe.hcj.MainActivity
 import com.globe.hcj.R
+import com.globe.hcj.constants.ROOM_ID
 import com.globe.hcj.data.firestore.User
+import com.globe.hcj.preference.TraySharedPreference
 import com.globe.hcj.view.pair.PairAddActivity
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -81,6 +83,9 @@ class LoginAcitivity : AppCompatActivity() {
                                     if (user!!.pair.isBlank()) {
                                         startActivity(Intent(this@LoginAcitivity, PairAddActivity::class.java))
                                     } else {
+                                        val roomId = TraySharedPreference(this).getString(ROOM_ID, "")
+                                        if (roomId.isNullOrEmpty())
+                                            TraySharedPreference(this).put(ROOM_ID, user.roomId)
                                         startActivity(Intent(this@LoginAcitivity, MainActivity::class.java))
                                     }
                                 }
