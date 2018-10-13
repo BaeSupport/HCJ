@@ -145,7 +145,6 @@ class ChatFragment() : Fragment() {
         }
         messageEdit.setText("")
 
-
         newChatMessageRef.set(messageObject).addOnCompleteListener {
 
 
