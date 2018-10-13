@@ -4,15 +4,20 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import com.globe.hcj.MainActivity
 import com.globe.hcj.R
 import com.globe.hcj.constants.ROOM_ID
 import com.globe.hcj.data.firestore.User
+import com.globe.hcj.data.local.AreaItem
+import com.globe.hcj.data.local.inputStreamToString
 import com.globe.hcj.preference.TraySharedPreference
 import com.globe.hcj.view.login.LoginAcitivity
 import com.globe.hcj.view.pair.PairAddActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 /**
  * Created by baeminsu on 10/10/2018.
@@ -23,6 +28,14 @@ class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
+
+        val postData: String? = inputStreamToString(resources.openRawResource(R.raw.post_data))
+
+        val area: ArrayList<AreaItem> = Gson().fromJson(postData, object : TypeToken<List<AreaItem>>() {}.type)
+
+        Log.e("asdf", area[0].area)
+        Log.e("asdf", area[0].list?.toString())
+
 
         val handler = Handler()
         handler.postDelayed({

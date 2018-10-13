@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="256dp">
+
+    <ImageView
+        android:src="@drawable/postmap"
+        android:id="@+id/PostImage"
+        android:layout_width="match_parent"
+        android:layout_height="200dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/PostImage"
+        android:text="미스터힐링"
+        android:id="@+id/PostTitle"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/PostTitle"
+        android:layout_below="@+id/PostTitle"
+        android:textColor="#aff000"
+        android:id="@+id/PostStar"
+        android:text="☆☆☆☆☆ 0.0 / 5"
+        android:textSize="14sp" />
+
+
+
+</RelativeLayout>
