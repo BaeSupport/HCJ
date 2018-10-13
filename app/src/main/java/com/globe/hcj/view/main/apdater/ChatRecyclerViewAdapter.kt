@@ -82,11 +82,11 @@ class MyTextMessageViewHolder(val view: View) : ChatMessage(view) {
         val convertData = data as TextMessage
         view.send_text_message_body.text = convertData.message
         view.send_text_message_time.text = dateFormat.format(convertData.messageDate)
-        if (convertData.unReadCount == 0) {
-            view.send_text_message_unread_count.visibility = View.INVISIBLE
-        } else {
-            view.send_text_message_unread_count.visibility = View.VISIBLE
-        }
+//        if (convertData.unReadCount == 0) {
+//            view.send_text_message_unread_count.visibility = View.INVISIBLE
+//        } else {
+//            view.send_text_message_unread_count.visibility = View.VISIBLE
+//        }
     }
 }
 
@@ -97,10 +97,10 @@ class PairTextMessageViewHolder(val view: View) : ChatMessage(view) {
         view.receive_text_message_name.text = data.sendName
         view.receive_text_message_body.text = convertData.message
         view.receive_text_message_time.text = dateFormat.format(convertData.messageDate)
-        if (convertData.unReadCount == 0) {
-            view.receive_text_message_unread_count.visibility = View.INVISIBLE
-        } else {
-            view.receive_text_message_unread_count.visibility = View.VISIBLE
-        }
+//        if (convertData.unReadCount == 0) {
+//            view.receive_text_message_unread_count.visibility = View.INVISIBLE
+//        } else {
+//            view.receive_text_message_unread_count.visibility = View.VISIBLE
+//        }
     }
 }
