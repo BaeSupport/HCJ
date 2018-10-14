@@ -15,6 +15,18 @@ import java.text.SimpleDateFormat
 
 
 class ChatRecyclerViewAdapter(var context: Context) : RecyclerView.Adapter<ChatMessage>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatMessage {
+        var view: View? = null
+        return if (viewType == SEND_MESSAGE) {
+            view = LayoutInflater.from(context).inflate(R.layout.recycler_item_sent_message, parent, false)
+            MyTextMessageViewHolder(view)
+        } else {
+            view = LayoutInflater.from(context).inflate(R.layout.recycler_item_recive_message, parent, false)
+            PairTextMessageViewHolder(view)
+        }
+    }
+
     val SEND_MESSAGE = 10
     val RECEIVE_MESSAGE = 20
     var list = ArrayList<IMessageInterface>()
@@ -29,16 +41,6 @@ class ChatRecyclerViewAdapter(var context: Context) : RecyclerView.Adapter<ChatM
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ChatMessage {
-        var view: View? = null
-        return if (viewType == SEND_MESSAGE) {
-            view = LayoutInflater.from(context).inflate(R.layout.recycler_item_sent_message, parent, false)
-            MyTextMessageViewHolder(view)
-        } else {
-            view = LayoutInflater.from(context).inflate(R.layout.recycler_item_recive_message, parent, false)
-            PairTextMessageViewHolder(view)
-        }
-    }
 
     override fun getItemCount(): Int {
         return list.size
@@ -70,6 +72,7 @@ class ChatRecyclerViewAdapter(var context: Context) : RecyclerView.Adapter<ChatM
     }
 
 }
+
 abstract class ChatMessage(view: View) : RecyclerView.ViewHolder(view) {
     abstract fun setView(data: IMessageInterface)
 }

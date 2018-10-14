@@ -6,6 +6,9 @@ package com.globe.hcj.data.firestore;
 
 public class AlbumPhoto {
 
+    public AlbumPhoto() {
+    }
+
     public AlbumPhoto(String albumURL) {
         this.albumURL = albumURL;
     }

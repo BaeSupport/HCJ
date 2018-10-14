@@ -17,6 +17,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -42,28 +49,41 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static android.app.Activity.RESULT_OK;
+import static com.globe.hcj.constants.PreferenceKeyConstantsKt.ROOM_ID;
 
 public class AlbumFragment extends Fragment {
 
     private final int GALLERY_CODE = 1112;
     private final int CAMERA_CODE = 1111;
-
+    private String roomId;
     RecyclerView recyclerView;
     FloatingActionButton btn;
-
+    AlbumRecyclerViewAdapter adapter;
     private Uri photoUri;
     private String currentPhotoPath;//실제 사진 파일 경로
     String mImageCaptureName;//이미지 이름
+    ListenerRegistration photoListener;
 
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if (isVisibleToUser) {
+            addMessageListener();
+        } else {
+            if (photoListener != null) {
+                photoListener.remove();
+            }
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_album, container, false);
 
+        roomId = new TraySharedPreference(getContext()).getString(ROOM_ID, "");
         btn = view.findViewById(R.id.fragment_album_btn);
         recyclerView = view.findViewById(R.id.fragment_album_recyclerview);
-        AlbumRecyclerViewAdapter adapter = new AlbumRecyclerViewAdapter(getContext());
+        adapter = new AlbumRecyclerViewAdapter(getContext());
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 4);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
@@ -260,5 +280,39 @@ public class AlbumFragment extends Fragment {
         return cursor.getString(column_index);
     }
 
+
+    public void addMessageListener() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference allAlbumRef = db.collection("room").document(roomId)
+                .collection("album");
+
+        photoListener = allAlbumRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots, @javax.annotation.Nullable FirebaseFirestoreException e) {
+
+                for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                    AlbumPhoto photo;
+                    switch (dc.getType()) {
+                        case ADDED:
+                            Log.e("체크", "애드");
+                            photo = dc.getDocument().toObject(AlbumPhoto.class);
+                            if (!adapter.isDuplicatedPhotoCheck(photo)) {
+                                Log.e("체크", "중복");
+                                adapter.addPhoto(photo);
+                                adapter.notifyDataSetChanged();
+                            }
+                            break;
+                        case MODIFIED:
+                            Log.e("체크", "모디파이");
+                            break;
+                        case REMOVED:
+                            Log.e("체크", "리무브");
+                            break;
+                    }
+                }
+            }
+        });
+
+    }
 
 }
