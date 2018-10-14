@@ -64,16 +64,7 @@ public class AlbumFragment extends Fragment {
     String mImageCaptureName;//이미지 이름
     ListenerRegistration photoListener;
 
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        if (isVisibleToUser) {
-            addMessageListener();
-        } else {
-            if (photoListener != null) {
-                photoListener.remove();
-            }
-        }
-    }
+
 
     @Nullable
     @Override
@@ -281,7 +272,7 @@ public class AlbumFragment extends Fragment {
     }
 
 
-    public void addMessageListener() {
+    public void addAlbumListener() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference allAlbumRef = db.collection("room").document(roomId)
                 .collection("album");
@@ -315,4 +306,17 @@ public class AlbumFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        addAlbumListener();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (photoListener != null) {
+            photoListener.remove();
+        }
+    }
 }

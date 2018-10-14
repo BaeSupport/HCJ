@@ -1,14 +1,20 @@
 package com.globe.hcj.view.main.apdater
 
 import android.content.Context
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.globe.hcj.R
 import com.globe.hcj.data.firestore.IMessageInterface
 import com.globe.hcj.data.firestore.TextMessage
+import com.globe.hcj.data.firestore.User
+import com.globe.hcj.util.GlideApp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.recycler_item_recive_message.view.*
 import kotlinx.android.synthetic.main.recycler_item_sent_message.view.*
 import java.text.SimpleDateFormat
@@ -100,6 +106,26 @@ class PairTextMessageViewHolder(val view: View) : ChatMessage(view) {
         view.receive_text_message_name.text = data.sendName
         view.receive_text_message_body.text = convertData.message
         view.receive_text_message_time.text = dateFormat.format(convertData.messageDate)
+
+        val db = FirebaseFirestore.getInstance();
+        db.collection("user").document(data.sendEmail)
+                .get().addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        var user = it.result.toObject(User::class.java)
+
+                        GlideApp.with(view)
+                                .load(Uri.parse(user!!.profileURL))
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(view.receive_image_message_profile)
+//                        Glide.with(view)
+//                                .load(Uri.parse(user!!.profileURL))
+//                                .into(view.receive_image_message_profile)
+                    }
+                }
+
+        Glide.with(view)
+                .load(Uri.parse(data.profileURL))
+                .into(view.receive_image_message_profile)
 //        if (convertData.unReadCount == 0) {
 //            view.receive_text_message_unread_count.visibility = View.INVISIBLE
 //        } else {

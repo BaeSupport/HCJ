@@ -27,7 +27,7 @@ import java.util.*
  * Created by baeminsu on 10/10/2018.
  */
 
-class ChatFragment() : Fragment() {
+class ChatFragment : Fragment() {
 
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
     private lateinit var roomId: String
@@ -36,16 +36,6 @@ class ChatFragment() : Fragment() {
     private var messageListener: ListenerRegistration? = null
     private lateinit var adapter: ChatRecyclerViewAdapter
     private lateinit var recyclerview: RecyclerView
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        if (isVisibleToUser) {
-            addMessageListener()
-        } else {
-            if (messageListener != null) {
-                messageListener!!.remove()
-            }
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
@@ -60,6 +50,7 @@ class ChatFragment() : Fragment() {
             recyclerview = view.chat_room_recycler
             setView(view)
         }
+        addMessageListener()
         return view
     }
 
@@ -151,5 +142,5 @@ class ChatFragment() : Fragment() {
         }
 
     }
-
+    
 }

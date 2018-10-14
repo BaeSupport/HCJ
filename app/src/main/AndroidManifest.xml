@@ -26,8 +26,6 @@
         <activity android:name=".view.login.LoginAcitivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".view.pair.PairAddActivity" />
-        <activity android:name=".view.postmap.PostMapActivity">
-        </activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
